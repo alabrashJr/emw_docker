@@ -12,12 +12,11 @@ RUN apt-get install --yes --no-install-recommends \
     wget \
     vim \  
     git \
-    sudo \
     maven \  
     tmux \ 
     locales \
     cmake \
-    gcc-multilib \
+  #  gcc-multilib \
     build-essential \
     apt-utils
 
