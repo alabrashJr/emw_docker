@@ -5,7 +5,7 @@ MAINTAINER Abdulrahman Alabrash <aalabrash18@ku.edu.tr>
 #WORKDIR /usr/src/app
 RUN apt-get update
 RUN apt-get -y install g++ python-dev python3-dev ant
-RUN apt-get install -y software-properties-common
+#RUN apt-get install -y software-properties-common
 
 
 RUN apt-get install --yes --no-install-recommends \
@@ -29,6 +29,7 @@ RUN pip install --upgrade pip
 RUN pip install --no-cache-dir -r requirements.txt
 
 #nextflow installation
+ENV NXF_VER=19.04.1
 RUN wget -qO- https://get.nextflow.io | bash
 RUN mv nextflow ./bin
 RUN nextflow
@@ -47,6 +48,8 @@ RUN cd /bin/ && ln -s ../nextflow_test/bin/clean.py && ln -s ../nextflow_test/bi
 
 RUN echo "tmux new-session -d -s SVM_Classifier 'python /nextflow_test/svm/run.py'" >> ~/.bashrc 
 RUN echo "tmux new-session -d -s TT 'python /nextflow_test/bin/ttFlask.py'" >> ~/.bashrc 
+
+WORKDIR /emw_pipeline_nf
 
 
 
