@@ -39,26 +39,29 @@ def executeNF(fname):
 
 def todf(wl):
     try:
-        df=pd.DataFrame(wl,columns=["hashing","processes",">", "class_name"])
+        df=pd.DataFrame(wl,columns=["hashing","process","process 1",">", "class_name","class_number"])
         df.drop(">",axis=1,inplace=True)
-        df=df[["hashing","class_name"]]
+        df["processes"]=df["process"]+" "+df["process 1"]
+        df.drop("process",axis=1,inplace=True)
+        df.drop("process 1",axis=1,inplace=True)
+        df=df[["hashing","processes","class_name","class_number"]]
         df["hashing"]=df["hashing"].str.strip("[]")
         df["fileName"]=None
         df["Odir"]=None
         df["Opreview"]=None
         df["OLast_modified_date"]=None
         df["OCreated_date"]=None
+        df["class_number"]=df["class_number"].str.strip("()")
         df=df[~df["hashing"].isnull()]
+        df=df[df["processes"]=="Submitted process"]
         return df
     except Exception as err:
         print(wl,"\n",err.with_traceback())
         raise RuntimeError()
-        
 def getFFN(path,stratW):
     for x in os.listdir(path):
         if (x.startswith(stratW)):
             return os.path.join(path,x)
-
 def summarizedf(ds,gby="filename",toexcel=True):
     gr=ds.groupby(["fileName"])
     dicss=[]
@@ -72,7 +75,6 @@ def summarizedf(ds,gby="filename",toexcel=True):
         dtc=ds.ix[_][ds.ix[_]["class_name"]=="DTC"]["Opreview"].tolist()[0]["publish data"]
         fInfo["DTC"]=dtc
         if(int(output)==1):
-                print(_,key)
                 places=ds.ix[_][ds.ix[_]["class_name"]=="placeTagger"]["Opreview"].tolist()[0][1:]
                 tt=ds.ix[_][ds.ix[_]["class_name"]=="temporalTagger"]["Opreview"].tolist()[0]["temporalTagger"]
         fInfo["places"]=places
@@ -103,10 +105,10 @@ def getAlldir(df,file):
 def NFfilter(nfin):
     workls=[]
     for x in nfin:
-        if len(x)==9:
-            _=x[:4]
-            workls.append(_)
+        if len(x)==6:
+            workls.append(x)
     return workls
+
 if __name__ == "__main__":
     workdir=os.path.join(os.getcwd(),"work")
     args=get_args()
@@ -114,5 +116,5 @@ if __name__ == "__main__":
     wl=NFfilter(nfou)
     df=getAlldir(todf(wl),workdir)
     df.sort_values(by=["fileName","OLast_modified_date"]).set_index("fileName").to_excel(time.strftime("%H-%M-%Y%m%d")+".xlsx")
-    #ds=summarizedf(df)
+    ds=summarizedf(df)
     print("All done\n","Reports have been created successfully")
