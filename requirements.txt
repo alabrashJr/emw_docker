@@ -12,7 +12,7 @@ matplotlib==3.1.1
 nbformat== 4.4.0
 newspaper3k==0.2.8
 nltk== 3.3
-numpy==1.16.1 
+numpy==1.22.0 
 openpyxl== 2.6.0
 pandas== 0.22.0 
 requests== 2.21.0 
